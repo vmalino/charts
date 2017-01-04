@@ -1,6 +1,7 @@
 # PyOpenGL demo of a histogram and its mean (normal and sample)
 # The green frame shows normal (expected) histogram range and average position
 # The red fulcrum calculated as mean shows physical (mechanical) sense of histogram (balanced lever)
+# By Vladimir Malinovskiy
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -12,7 +13,8 @@ from random import randint
 global row  # Single variable values from simulation
 
 
-# Single variable simulation - random walk modified with 4 scenarios
+# Single variable simulation - random walk modified with 4 scenarios of possible variable move
+# 4 scenarios idea is from "The Only Three Questions That Count" by Ken Fischer
 def simulation(v0, l):
     val = v0
     lst = [val]
@@ -57,7 +59,10 @@ def histogram(var, x0, y0):
 
 # Normal (expected) distribution range and center
 def frame(var, x0, y0):
-    glColor3f(0, 1, 0)  # To show normal frame in green
+    glColor3f(0, 0.7, 0)  # To show normal frame in green
+    glPushAttrib(GL_ENABLE_BIT)
+    glLineStipple(10, 0xDDDD)  # To draw frame dashed
+    glEnable(GL_LINE_STIPPLE)
     glLineWidth(2)
     glBegin(GL_LINE_LOOP)  # To draw frame square (bins x probability)
     glVertex2f(x0, y0)
@@ -69,6 +74,7 @@ def frame(var, x0, y0):
     glVertex2f(x0 + 5, y0 + 11)
     glVertex2f(x0 + 5, y0 - 1)
     glEnd()
+    glPopAttrib()  # Turn dashed off
 
 
 # Histogram lever pivot point
@@ -85,7 +91,7 @@ def fulcrum(var, x0, y0):
 
 # GLUT initialization
 def init():
-    glClearColor(255, 255, 255, 1)
+    glClearColor(255, 255, 255, 1)  # White background
     gluOrtho2D(0, 20, 0, 15)  # x-left, x-right, y-bottom, y-top
 
 
@@ -104,9 +110,9 @@ def plot():
 def keyboard(key, x, y):
     global row
     if key == b'\x1B' or key == b'q' or key == b'Q':
-        sys.exit()  # Exit by q, Q, or ESC
+        sys.exit()  # Exit upon q, Q, or ESC
     elif key == b'r' or key == b'R':
-        row = simulation(50, 10)  # Re-draw histogram with new simulation by r or R
+        row = simulation(50, 10)  # Re-draw histogram with new simulation upon r or R
         glutPostRedisplay()
 
 
@@ -114,7 +120,7 @@ row = simulation(50, 10)  # Initial simulation
 glutInit()
 glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
 glutInitWindowSize(900, 600)
-glutInitWindowPosition(450, 100)
+glutInitWindowPosition(100, 100)
 glutCreateWindow('Histogram with Normal frame and Lever fulcrum (\'r\' to refresh)')
 glutDisplayFunc(plot)
 glutKeyboardFunc(keyboard)
