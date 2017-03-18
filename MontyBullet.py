@@ -67,34 +67,44 @@ def bullet_graph(d, s):
     global game, strats
     glColor3f(0.8, 0.8, 0.8)
     glBegin(GL_QUADS)  # Theoretical (expected) percentage of successes
-    glVertex2f(14 * d - 7.5, 17)
-    glVertex2f(14 * d - 7.5, 17 + 5 * (1 + s) / 3)
-    glVertex2f(14 * d - 4.5, 17 + 5 * (1 + s) / 3)
-    glVertex2f(14 * d - 4.5, 17)
+    glVertex2f(14 * d - 6.5, 9.5)
+    glVertex2f(14 * d - 6.5, 9.5 + 5 * (1 + s) / 3)
+    glVertex2f(14 * d - 3.5, 9.5 + 5 * (1 + s) / 3)
+    glVertex2f(14 * d - 3.5, 9.5)
     glEnd()
     if strats_counts[s] > 0:
         glColor3f(0, 0, 0)
         glBegin(GL_QUADS)  # Sample percentage of successes for a strategy
-        glVertex2f(14 * d - 6.5, 17)
-        glVertex2f(14 * d - 6.5, 17 + 5 * strats[s] / strats_counts[s])
-        glVertex2f(14 * d - 5.5, 17 + 5 * strats[s] / strats_counts[s])
-        glVertex2f(14 * d - 5.5, 17)
+        glVertex2f(14 * d - 5.5, 9.5)
+        glVertex2f(14 * d - 5.5, 9.5 + 5 * strats[s] / strats_counts[s])
+        glVertex2f(14 * d - 4.5, 9.5 + 5 * strats[s] / strats_counts[s])
+        glVertex2f(14 * d - 4.5, 9.5)
         glEnd()
     glLineWidth(1)
     glColor3f(0, 0, 0)
     glBegin(GL_LINE_LOOP)  # Graph frame (full range = 1)
-    glVertex2f(14 * d - 7.5, 17)
-    glVertex2f(14 * d - 7.5, 22)
-    glVertex2f(14 * d - 4.5, 22)
-    glVertex2f(14 * d - 4.5, 17)
+    glVertex2f(14 * d - 6.5, 9.5)
+    glVertex2f(14 * d - 6.5, 14.5)
+    glVertex2f(14 * d - 3.5, 14.5)
+    glVertex2f(14 * d - 3.5, 9.5)
     glEnd()
 
 
 # GLUT initialization
 def init():
-    glClearColor(255, 255, 255, 1)  # White background
-    gluOrtho2D(0, 45, 0, 25)  # x-left, x-right, y-bottom, y-top
+    global game, prize, choosen1, opened, choosen2, strats, strats_counts
 
+    glClearColor(255, 255, 255, 1)  # White background
+    gluOrtho2D(0, 45, 0, 20)  # x-left, x-right, y-bottom, y-top
+
+    # Initial state at the first game
+    game = 1
+    prize = randint(1, 3)  # Randomly put prize behind one of the doors
+    choosen1 = 0
+    opened = 0
+    choosen2 = 0
+    strats = [0, 0]
+    strats_counts = [0, 0]
 
 # Drawing function called in glutDisplayFunc()
 def plot():
@@ -169,17 +179,8 @@ def keyboard(key, x, y):
             glutPostRedisplay()
 
 
-# Initial state at the first game
-game = 1
-prize = randint(1, 3)  # Randomly put prize behind one of the doors
-choosen1 = 0
-opened = 0
-choosen2 = 0
-strats = [0, 0]
-strats_counts = [0, 0]
-glutInit()
 glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
-glutInitWindowSize(900, 600)
+glutInitWindowSize(900, 400)
 glutInitWindowPosition(100, 100)
 glutCreateWindow('Monty Hall simulation with bullet graph')
 glutDisplayFunc(plot)
